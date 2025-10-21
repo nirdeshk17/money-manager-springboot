@@ -1,6 +1,6 @@
 # --- STAGE 1: BUILDER ---
 # Use a JDK image (with Maven/Gradle) to compile the source code
-FROM maven:3.9.6-eclipse-temurin-21-slim AS builder
+FROM maven:3.9.6-eclipse-temurin-21 AS builder
 WORKDIR /app
 
 # 1. Copy the pom.xml and source code
