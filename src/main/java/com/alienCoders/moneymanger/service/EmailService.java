@@ -49,7 +49,6 @@ public class EmailService {
         email.put("to",toList);
         email.put("subject",subject);
         email.put("htmlContent",body);
-        System.out.println(email);
         String json=objectMapper.writeValueAsString(email);
         post.setEntity(new StringEntity(json, StandardCharsets.UTF_8));
 
