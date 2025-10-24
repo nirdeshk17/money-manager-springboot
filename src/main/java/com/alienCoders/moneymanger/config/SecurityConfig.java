@@ -3,6 +3,7 @@ package com.alienCoders.moneymanger.config;
 import com.alienCoders.moneymanger.security.JwtRequestFilter;
 import com.alienCoders.moneymanger.service.AppUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,7 +30,8 @@ import java.util.List;
 public class SecurityConfig {
     final AppUserDetailsService appUserDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
-
+    @Value("${server.servlet.context-path}")
+    private  String apiPath;
 
     @Bean  // makes this method return value available in Spring (like a ready-to-use object stored in spring memory)
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -44,7 +46,7 @@ public class SecurityConfig {
                 // decide which URLs are public and which need login
                 .authorizeHttpRequests(auth -> auth
                         // no login required for these
-                        .requestMatchers("/status", "/health", "/register", "/login","/activate","/categories").permitAll()
+                        .requestMatchers(apiPath+"/status", apiPath+"/health", apiPath+"/register", apiPath+"/login",apiPath+"/activate",apiPath+"/categories").permitAll()
                         // everything else requires authentication
                         .anyRequest().authenticated()
                 )
