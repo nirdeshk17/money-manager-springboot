@@ -36,7 +36,7 @@ public class SecurityConfig {
 
         httpSecurity
                 // allow frontend (React, Angular, etc.) to talk to backend because they may be running in different port
-                .cors(Customizer.withDefaults())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // turn off CSRF (needed for REST APIs, otherwise it blocks requests because we are using jwt(json web token) token in every request)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -74,9 +74,13 @@ public class SecurityConfig {
         // allow these HTTP methods
         configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS","PATCH"));
 
+        //allow all types of header data
+        configuration.setAllowedHeaders(List.of("*"));
         // allow sending cookies / tokens with requests
         configuration.setAllowCredentials(true);
 
+        //allow authorization data
+        configuration.setExposedHeaders(List.of("Authorization", "Content-Disposition"));
         // apply this CORS config to all paths (/** means every URL)
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
