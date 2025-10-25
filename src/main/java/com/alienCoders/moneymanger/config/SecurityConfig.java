@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -45,6 +46,8 @@ public class SecurityConfig {
 
                 // decide which URLs are public and which need login
                 .authorizeHttpRequests(auth -> auth
+                        // allow all preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // no login required for these
                         .requestMatchers(apiPath+"/status", apiPath+"/health", apiPath+"/register", apiPath+"/login",apiPath+"/activate",apiPath+"/categories").permitAll()
                         // everything else requires authentication
