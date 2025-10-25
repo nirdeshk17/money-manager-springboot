@@ -49,7 +49,7 @@ public class SecurityConfig {
                         // allow all preflight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // no login required for these
-                        .requestMatchers(apiPath+"/status", apiPath+"/health", apiPath+"/register", apiPath+"/login",apiPath+"/activate",apiPath+"/categories").permitAll()
+                        .requestMatchers("/status","/health","/register","/login","/activate","/categories").permitAll()
                         // everything else requires authentication
                         .anyRequest().authenticated()
                 )
