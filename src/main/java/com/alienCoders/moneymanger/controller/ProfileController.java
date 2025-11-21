@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -17,8 +18,8 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerProfile(ProfileDTO profileDTO){
-
+    public ResponseEntity<?> registerProfile(@RequestBody ProfileDTO profileDTO){
+        System.out.println(profileDTO);
         if(profileService.isEmailExist(profileDTO.getEmail())){
            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message","Email already exist"));
        }
@@ -27,7 +28,7 @@ public class ProfileController {
     }
 
     @GetMapping("/activate")
-    public ResponseEntity<String> activateProfile(@RequestParam String token){
+    public ResponseEntity<String> activateProfile(@RequestBody String token){
    boolean isActivated=profileService.activateProfile(token);
    if(isActivated){
        return ResponseEntity.ok("Profile activated successfully");
@@ -38,13 +39,17 @@ public class ProfileController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String,Object>> login(@RequestParam String email,@RequestParam String password){
+    public ResponseEntity<Map<String,Object>> login(@RequestBody AuthDTO authDTO){
         try {
-            AuthDTO authDTO=new AuthDTO(email,password,null);
             if(!profileService.isEmailExist(authDTO.getEmail())){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                        "Message","Account not found"
+                        "message","Email not found"
                 ));
+            }
+            if(!profileService.isPasswordCorrect(authDTO.getEmail(),authDTO.getPassword())){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                        Map.of("message","Incorrect password")
+                );
             }
             if(!profileService.isAccountActive(authDTO.getEmail())){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
@@ -63,5 +68,11 @@ public class ProfileController {
     @GetMapping("/test")
     public String test(){
         return "Testing";
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<ProfileDTO> getPublicProfile(){
+        ProfileDTO profileDTO=profileService.getPublicProfile(null);
+        return ResponseEntity.ok(profileDTO);
     }
 }

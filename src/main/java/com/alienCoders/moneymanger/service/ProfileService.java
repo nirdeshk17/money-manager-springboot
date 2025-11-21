@@ -45,7 +45,8 @@ public class ProfileService {
        }
         // Convert incoming DTO object into an Entity object
         ProfileEntity newProfile = toEntity(profileDTO);
-
+        System.out.println("Full Name"+newProfile.getFullName());
+        System.out.println("Password"+newProfile.getPassword());
         // Generate a unique activation token (used for email verification, etc.)
         newProfile.setActivationToken(UUID.randomUUID().toString());
         // Encode password
@@ -103,6 +104,11 @@ public class ProfileService {
 
     public boolean isEmailExist(String email){
         return profileRepository.findByEmail(email).isPresent();
+    }
+
+    public boolean isPasswordCorrect(String email,String password){
+        return profileRepository.findByEmail(email)
+                .map(profile->passwordEncoder.matches(password,profile.getPassword())).orElse(false);
     }
     // Get the profile of the currently logged-in user
     public ProfileEntity getCurrentProfile() {
@@ -164,7 +170,7 @@ public class ProfileService {
             // 3. Return both the token and user's public profile as response
             return Map.of(
                     "token", token,                 // Placeholder for the actual JWT
-                    "User", getPublicProfile(authDTO.getEmail()) // Get user's profile info
+                    "user", getPublicProfile(authDTO.getEmail()) // Get user's profile info
             );
         }
         catch (Exception e){

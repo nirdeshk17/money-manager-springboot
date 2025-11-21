@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -31,8 +30,6 @@ import java.util.List;
 public class SecurityConfig {
     final AppUserDetailsService appUserDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
-    @Value("${server.servlet.context-path}")
-    private  String apiPath;
 
     @Bean  // makes this method return value available in Spring (like a ready-to-use object stored in spring memory)
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -46,10 +43,8 @@ public class SecurityConfig {
 
                 // decide which URLs are public and which need login
                 .authorizeHttpRequests(auth -> auth
-                        // allow all preflight
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // no login required for these
-                        .requestMatchers("/status","/health","/register","/login","/activate","/categories").permitAll()
+                        .requestMatchers("/status", "/health", "/register", "/login","/activate","/categories").permitAll()
                         // everything else requires authentication
                         .anyRequest().authenticated()
                 )
@@ -74,7 +69,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // allow requests from all origins (frontend apps, mobile apps, etc.)
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOriginPatterns(List.of("*"));
 
         // allow these HTTP methods
         configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS","PATCH"));

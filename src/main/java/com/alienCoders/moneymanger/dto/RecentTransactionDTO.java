@@ -17,6 +17,7 @@ public class RecentTransactionDTO {
     private Long id;
     private Long profileId;
     private Long categoryId;
+    private String categoryName;
     private String icon;
     private String name;
     private BigDecimal amount;

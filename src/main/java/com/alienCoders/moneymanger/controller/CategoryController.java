@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,9 +20,15 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<CategoryDTO> saveCategory( CategoryDTO categoryDTO){
-        CategoryDTO savedCategory=categoryService.saveCategory(categoryDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
+    public ResponseEntity<?> saveCategory(@RequestBody CategoryDTO categoryDTO){
+       try {
+           CategoryDTO savedCategory=categoryService.saveCategory(categoryDTO);
+           return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
+       }
+       catch (RuntimeException e){
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",e.getMessage()));
+       }
+
     }
 
     @GetMapping
@@ -39,7 +46,7 @@ public class CategoryController {
     @PutMapping("/{categoryId}")
     public ResponseEntity<CategoryDTO> updateCategory(
             @PathVariable Long categoryId,
-            @ModelAttribute CategoryDTO categoryDTO) {
+            @RequestBody CategoryDTO categoryDTO) {
         CategoryDTO updatedCategoryDto = categoryService.updateCategory(categoryId, categoryDTO);
         return ResponseEntity.ok(updatedCategoryDto);
     }

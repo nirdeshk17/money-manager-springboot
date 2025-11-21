@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +29,8 @@ public class FilterController {
 
 
     @PostMapping
-    public ResponseEntity<?> filterTransaction(FilterDTO filterDTO){
+    public ResponseEntity<?> filterTransaction(@RequestBody FilterDTO filterDTO){
+        System.out.println("hellooo");
         LocalDate startDate=filterDTO.getStartDate()!=null?filterDTO.getStartDate():LocalDate.MIN;
         LocalDate endDate=filterDTO.getEndDate()!=null?filterDTO.getEndDate():LocalDate.now();
         String keyword=filterDTO.getKeyword()!=null?filterDTO.getKeyword():"";

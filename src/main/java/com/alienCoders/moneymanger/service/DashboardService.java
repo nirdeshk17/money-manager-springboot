@@ -26,11 +26,12 @@ public class DashboardService {
     public Map<String,Object> getDashBoardData() {
         ProfileEntity profileEntity = profileService.getCurrentProfile();
         Map<String, Object> returnValue = new LinkedHashMap<>();
-        List<ExpenseDTO> expenseEntityList = expenseService.getLatestFiveExpenseList();
-        List<IncomeDTO> incomeEntityList = incomeService.getLatestFiveIncomeList();
-        List<RecentTransactionDTO> recentTransactionDTOS = Stream.concat(incomeEntityList.stream().map(incomeDTO -> RecentTransactionDTO.builder()
+        List<ExpenseDTO> expenseDtoList = expenseService.getLatestFiveExpenseList();
+        List<IncomeDTO> incomeDtoList = incomeService.getLatestFiveIncomeList();
+        List<RecentTransactionDTO> recentTransactionDTOS = Stream.concat(incomeDtoList.stream().map(incomeDTO -> RecentTransactionDTO.builder()
                                 .id(incomeDTO.getId())
                                 .categoryId(incomeDTO.getCategoryId())
+                                .categoryName(incomeDTO.getCategoryName())
                                 .icon(incomeDTO.getIcon())
                                 .profileId(profileEntity.getId())
                                 .amount(incomeDTO.getAmount())
@@ -40,9 +41,10 @@ public class DashboardService {
                                 .updatedAt(incomeDTO.getUpdatedAt())
                                 .type("income")
                                 .build()),
-                        expenseEntityList.stream().map(expenseDTO -> RecentTransactionDTO.builder()
+                        expenseDtoList.stream().map(expenseDTO -> RecentTransactionDTO.builder()
                                 .id(expenseDTO.getId())
                                 .categoryId(expenseDTO.getCategoryId())
+                                .categoryName(expenseDTO.getCategoryName())
                                 .icon(expenseDTO.getIcon())
                                 .profileId(profileEntity.getId())
                                 .amount(expenseDTO.getAmount())
@@ -61,8 +63,9 @@ public class DashboardService {
                 }).collect(Collectors.toList());
  returnValue.put("totalBalance",incomeService.getTotalIncome().subtract(expenseService.getTotalExpense()));
  returnValue.put("totalExpense",expenseService.getTotalExpense());
- returnValue.put("recent5Expenses",expenseEntityList);
-  returnValue.put("recent5Incomes",incomeEntityList);
+ returnValue.put("totalIncome",incomeService.getTotalIncome());
+ returnValue.put("recent5Expenses",expenseDtoList);
+  returnValue.put("recent5Incomes",incomeDtoList);
   returnValue.put("recentTransactions",recentTransactionDTOS);
   return  returnValue;
     }
